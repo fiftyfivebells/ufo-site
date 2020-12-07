@@ -20,7 +20,13 @@ func main() {
 	mux.HandleFunc("/stats", showStatistics)
 	mux.HandleFunc("/sightings", showSightings)
 
+	server := &http.Server{
+		Addr:     *addr,
+		ErrorLog: errorLog,
+		Handler:  mux,
+	}
+
 	infoLog.Printf("Starting server on %s", *addr)
-	err := http.ListenAndServe(*addr, mux)
+	err := server.ListenAndServe()
 	errorLog.Fatal(err)
 }

@@ -7,7 +7,7 @@ import (
 )
 
 // Route handler for the home page
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
@@ -34,16 +34,16 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 // Route handler for the sighting reporter
-func reportSighting(w http.ResponseWriter, r *http.Request) {
+func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
 // Route handler for the statistics page
-func showStatistics(w http.ResponseWriter, r *http.Request) {
+func (app *application) showStatistics(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
 // Route handler for sightings page
-func showSightings(w http.ResponseWriter, r *http.Request) {
+func (app *application) showSightings(w http.ResponseWriter, r *http.Request) {
 	return
 }

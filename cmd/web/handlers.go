@@ -1,11 +1,12 @@
 package main
 
 import (
-	"net/http"
 	"html/template"
 	"log"
+	"net/http"
 )
 
+// Route handler for the home page
 func home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
@@ -30,4 +31,19 @@ func home(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 		http.Error(w, "Internal server error", 500)
 	}
+}
+
+// Route handler for the sighting reporter
+func reportSighting(w http.ResponseWriter, r *http.Request) {
+	return
+}
+
+// Route handler for the statistics page
+func showStatistics(w http.ResponseWriter, r *http.Request) {
+	return
+}
+
+// Route handler for sightings page
+func showSightings(w http.ResponseWriter, r *http.Request) {
+	return
 }

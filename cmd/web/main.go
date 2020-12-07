@@ -24,16 +24,10 @@ func main() {
 		infoLog:  infoLog,
 	}
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/report", app.reportSighting)
-	mux.HandleFunc("/stats", app.showStatistics)
-	mux.HandleFunc("/sightings", app.showSightings)
-
 	server := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errorLog,
-		Handler:  mux,
+		Handler:  app.Routes(),
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)

@@ -13,5 +13,5 @@ func (app *application) Routes() http.Handler {
 	fileServer := http.FileServer(http.Dir("./ui/static"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	return app.logRequests(secureHeaders(mux))
+	return app.recoverPanic(app.logRequests(secureHeaders(mux)))
 }

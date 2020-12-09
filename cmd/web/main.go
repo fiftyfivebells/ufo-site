@@ -7,12 +7,15 @@ import (
 	"net/http"
 	"os"
 
+	"stephenbell.dev/ufo-site/pkg/models/postgresql"
+
 	_ "github.com/lib/pq"
 )
 
 type application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
+	errorLog  *log.Logger
+	infoLog   *log.Logger
+	sightings *postgresql.SightingModel
 }
 
 func main() {
@@ -35,6 +38,7 @@ func main() {
 	app := &application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
+		sightings: &postgresql.SightingModel{DB: db}
 	}
 
 	server := &http.Server{

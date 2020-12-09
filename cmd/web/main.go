@@ -36,9 +36,9 @@ func main() {
 	defer db.Close()
 
 	app := &application{
-		errorLog: errorLog,
-		infoLog:  infoLog,
-		sightings: &postgresql.SightingModel{DB: db}
+		errorLog:  errorLog,
+		infoLog:   infoLog,
+		sightings: &postgresql.SightingModel{DB: db},
 	}
 
 	server := &http.Server{

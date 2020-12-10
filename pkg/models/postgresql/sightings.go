@@ -44,14 +44,12 @@ func (m *SightingModel) Insert(userID int, datetime time.Time, season, city, sta
 }
 
 func (m *SightingModel) Get(id int) (*models.Sighting, error) {
-	stmt := `SELECT * FROM sightings WHERE user_id = $1`
-
-	row := m.DB.QueryRow(stmt, id)
-
+	stmt := `SELECT * FROM sightings WHERE index = $1`
 	s := &models.Sighting{}
 
-	// Copy data from the row we got back into the sighting struct
-	err := row.Scan(&s.UserID,
+	// Get row from DB, then copy data into sighting struct
+	err := m.DB.QueryRow(stmt, id).Scan(&s.Index,
+		&s.UserID,
 		&s.Datetime,
 		&s.Season,
 		&s.City,

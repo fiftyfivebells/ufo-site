@@ -2,10 +2,15 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"runtime/debug"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 func (app *application) serverError(w http.ResponseWriter, err error) {
@@ -48,4 +53,46 @@ func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, n
 
 	// If no error, write the buffer to the response writer
 	buf.WriteTo(w)
+}
+
+func (app *application) getLatAndLong(city, state string) (float64, float64) {
+
+	type geo struct {
+		Latitude  float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+	}
+
+	type geoList struct {
+		Data []geo `json:"data"`
+	}
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		return 0, 0
+	}
+
+	key := os.Getenv("POSITIONSTACK_API")
+	query := fmt.Sprintf("http://api.positionstack.com/v1/forward?access_key=%s&query=%s&region=%s", key, city, state)
+
+	resp, err := http.Get(query)
+	if err != nil {
+		app.errorLog.Println(err)
+		return -1, -1
+	}
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		app.errorLog.Println(err)
+		return -1, -1
+	}
+
+	var gl geoList
+
+	err = json.Unmarshal(bodyBytes, &gl)
+	if err != nil {
+		app.errorLog.Println(err)
+		return 0, 0
+	}
+
+	return gl.Data[0].Latitude, gl.Data[0].Longitude
 }

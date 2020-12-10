@@ -12,20 +12,16 @@ import (
 
 // Route handler for the home page
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		app.notFound(w)
-		return
-	}
-
 	app.renderTemplate(w, r, "home.page.tmpl", nil)
+}
+
+// Route handler for the form for reporting a sighting
+func (app *application) reportSightingForm(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Report a sighting..."))
 }
 
 // Route handler for the sighting reporter
 func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		app.clientError(w, http.StatusMethodNotAllowed)
-	}
 
 	userID := 10
 	datetime := time.Now()
@@ -45,7 +41,7 @@ func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/sighting?id=%d", id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/sighting/:%d", id), http.StatusSeeOther)
 }
 
 // Route handler for the statistics page
@@ -55,7 +51,7 @@ func (app *application) showStatistics(w http.ResponseWriter, r *http.Request) {
 
 // Route handler for sightings page
 func (app *application) showSightings(w http.ResponseWriter, r *http.Request) {
-	state := r.URL.Query().Get("state")
+	state := r.URL.Query().Get(":state")
 
 	s, err := app.sightings.GetByState(state)
 	if err != nil {
@@ -68,7 +64,7 @@ func (app *application) showSightings(w http.ResponseWriter, r *http.Request) {
 
 // Route handler for showing an individual sighting
 func (app *application) showSighting(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil {
 		http.NotFound(w, r)
 		return

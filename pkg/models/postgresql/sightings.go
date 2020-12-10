@@ -70,3 +70,45 @@ func (m *SightingModel) Get(id int) (*models.Sighting, error) {
 
 	return s, nil
 }
+
+func (m *SightingModel) GetByState(state string) ([]*models.Sighting, error) {
+	stmt := `SELECT * FROM sightings WHERE state = $1`
+
+	rows, err := m.DB.Query(stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	// Make sure to close up this resultset
+	defer rows.Close()
+
+	sightings := []*models.Sighting{}
+
+	for rows.Next() {
+		s := &models.Sighting{}
+
+		err := rows.Scan(&s.Index,
+			&s.UserID,
+			&s.Datetime,
+			&s.Season,
+			&s.City,
+			&s.State,
+			&s.Country,
+			&s.Shape,
+			&s.Duration,
+			&s.Latitude,
+			&s.Longitude)
+
+		if err != nil {
+			return nil, err
+		}
+
+		sightings = append(sightings, s)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return sightings, nil
+}

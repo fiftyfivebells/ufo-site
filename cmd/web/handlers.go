@@ -71,7 +71,32 @@ func (app *application) showStatistics(w http.ResponseWriter, r *http.Request) {
 
 // Route handler for sightings page
 func (app *application) showSightings(w http.ResponseWriter, r *http.Request) {
-	return
+	state := r.URL.Query().Get("state")
+
+	s, err := app.sightings.GetByState(state)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	data := &templateData{Sightings: s}
+
+	files := []string{
+		"./ui/html/sightings.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	err = ts.Execute(w, data)
+	if err != nil {
+		app.serverError(w, err)
+	}
 }
 
 // Route handler for showing an individual sighting

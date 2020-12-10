@@ -1,8 +1,14 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
+	"time"
+
+	"stephenbell.dev/ufo-site/pkg/models"
 )
 
 // Route handler for the home page
@@ -32,7 +38,30 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 // Route handler for the sighting reporter
 func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
-	return
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+	}
+
+	userID := 10
+	datetime := time.Now()
+	season := "fall"
+	city := "boston"
+	state := "ma"
+	country := "us"
+	shape := "triangle"
+	duration := 180
+	lat := 71.01040
+	long := -43.0220
+
+	id, err := app.sightings.Insert(userID, datetime, season, city, state, country, shape, duration, lat, long)
+
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/sighting?id=%d", id), http.StatusSeeOther)
 }
 
 // Route handler for the statistics page
@@ -63,5 +92,22 @@ func (app *application) showSighting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "%v", s)
+	data := &templateData{Sighting: s}
+
+	files := []string{
+		"./ui/html/show.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	err = ts.Execute(w, data)
+	if err != nil {
+		app.serverError(w, err)
+	}
 }

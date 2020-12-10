@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 
 	"stephenbell.dev/ufo-site/pkg/models"
@@ -33,5 +34,31 @@ func (m *SightingModel) Insert(userID int, datetime time.Time, season, city, sta
 }
 
 func (m *SightingModel) Get(id int) (*models.Sighting, error) {
-	return nil, nil
+	stmt := `SELECT * FROM sightings WHERE user_id = $1`
+
+	row := m.DB.QueryRow(stmt, id)
+
+	s := &models.Sighting{}
+
+	// Copy data from the row we got back into the sighting struct
+	err := row.Scan(&s.UserID,
+		&s.Datetime,
+		&s.Season,
+		&s.City,
+		&s.State,
+		&s.Country,
+		&s.Shape,
+		&s.Duration,
+		&s.Latitude,
+		&s.Longitude)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, models.ErrNoRecord
+		} else {
+			return nil, err
+		}
+	}
+
+	return s, nil
 }

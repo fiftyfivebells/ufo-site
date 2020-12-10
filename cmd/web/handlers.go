@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 	"time"
@@ -18,22 +17,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	err = ts.Execute(w, nil)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	app.renderTemplate(w, r, "home.page.tmpl", nil)
 }
 
 // Route handler for the sighting reporter
@@ -79,24 +63,7 @@ func (app *application) showSightings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := &templateData{Sightings: s}
-
-	files := []string{
-		"./ui/html/sightings.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	err = ts.Execute(w, data)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	app.renderTemplate(w, r, "sightings.page.tmpl", &templateData{Sightings: s})
 }
 
 // Route handler for showing an individual sighting
@@ -117,22 +84,5 @@ func (app *application) showSighting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := &templateData{Sighting: s}
-
-	files := []string{
-		"./ui/html/show.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	err = ts.Execute(w, data)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	app.renderTemplate(w, r, "show.page.tmpl", &templateData{Sighting: s})
 }

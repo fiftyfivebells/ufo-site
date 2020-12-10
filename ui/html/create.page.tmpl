@@ -1,0 +1,27 @@
+{{template "base" .}}
+
+{{define "title"}}Report a Sighting{{end}}
+
+{{define "main"}}
+<form action="/report" method="POST">
+  <div>
+    <label>City:</label>
+    <input type="text" name="city">
+  </div>
+  <div>
+    <label>State:</label>
+    <input type="text" name="state">
+  </div>
+  <div>
+    <label>Shape:</label>
+    <input type="text" name="shape">
+  </div>
+  <div>
+    <label>Duration (seconds):</label>
+    <input type="text" name="duration">
+  </div>
+  <div>
+    <input type="submit" value="report sighting">
+  </div>
+</form>
+{{end}}

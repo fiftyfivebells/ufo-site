@@ -12,21 +12,24 @@ type SightingModel struct {
 }
 
 func (m *SightingModel) Insert(userID int, datetime time.Time, season, city, state, country, shape string, duration int, lat, long float64) (int, error) {
-	stmt := `INSERT INTO sightings (user_id, datetime, season, city, state, country, shape, duration, latitude, longitude) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+	// stmt := `INSERT INTO sightings  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO sightings (user_id, datetime, season, city, state, country, shape, duration, latitude, longitude) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING index`
 
-	result, err := m.DB.Exec(stmt, userID, datetime, season, city, state, country, shape, duration, lat, long)
+	stmt, err := m.DB.Prepare(query)
+
+	if err != nil {
+		return -1, err
+	}
+	defer stmt.Close()
+
+	var id int
+	err = stmt.QueryRow(userID, datetime, season, city, state, country, shape, duration, lat, long).Scan(&id)
 
 	if err != nil {
 		return -1, err
 	}
 
-	id, err := result.LastInsertId()
-
-	if err != nil {
-		return -1, err
-	}
-
-	return int(id), nil
+	return id, nil
 }
 
 func (m *SightingModel) Get(id int) (*models.Sighting, error) {

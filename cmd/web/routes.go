@@ -13,6 +13,7 @@ func (app *application) Routes() http.Handler {
 	mux.HandleFunc("/", app.home)
 	mux.HandleFunc("/report", app.reportSighting)
 	mux.HandleFunc("/stats", app.showStatistics)
+	mux.HandleFunc("/sighting", app.showSighting)
 	mux.HandleFunc("/sightings", app.showSightings)
 
 	// file server to serve static files

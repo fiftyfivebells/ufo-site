@@ -44,3 +44,24 @@ func (app *application) showStatistics(w http.ResponseWriter, r *http.Request) {
 func (app *application) showSightings(w http.ResponseWriter, r *http.Request) {
 	return
 }
+
+// Route handler for showing an individual sighting
+func (app *application) showSighting(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	s, err := app.sightings.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	fmt.Fprintf(w, "%v", s)
+}

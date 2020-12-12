@@ -10,12 +10,14 @@ import (
 
 	"stephenbell.dev/ufo-site/pkg/models/postgresql"
 
+	"github.com/golangcollege/sessions"
 	_ "github.com/lib/pq"
 )
 
 type application struct {
 	errorLog      *log.Logger
 	infoLog       *log.Logger
+	session       *sessions.Session
 	sightings     *postgresql.SightingModel
 	templateCache map[string]*template.Template
 }
@@ -23,6 +25,7 @@ type application struct {
 func main() {
 	addr := flag.String("addr", ":3000", "HTTP network address")
 	dsn := flag.String("dsn", "postgresql://stephen:stephen@localhost:5432/stephendb", "PGSQL data source name")
+	secret := flag.String("secret", "7dj.12*y4^skqz)ske@3jskv*s+kd1#2", "Secret key")
 
 	flag.Parse()
 
@@ -43,9 +46,13 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
+	// Initialize a new Session manager
+	session := sessions.New([]byte(*secret))
+
 	app := &application{
 		errorLog:      errorLog,
 		infoLog:       infoLog,
+		session:       session,
 		sightings:     &postgresql.SightingModel{DB: db},
 		templateCache: templateCache,
 	}

@@ -5,7 +5,11 @@ import (
 	"time"
 )
 
-var ErrNoRecord = errors.New("models: no existing record found")
+var (
+	ErrNoRecord           = errors.New("models: no existing record found")
+	ErrInvalidCredentials = errors.New("models: invalid credentials")
+	ErrDuplicateEmail     = errors.New("models: duplicate email")
+)
 
 type Sighting struct {
 	Index     int

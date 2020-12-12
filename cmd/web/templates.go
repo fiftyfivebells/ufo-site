@@ -8,6 +8,7 @@ import (
 )
 
 type templateData struct {
+	Flash       string
 	Sighting    *models.Sighting
 	Sightings   []*models.Sighting
 	CurrentYear int

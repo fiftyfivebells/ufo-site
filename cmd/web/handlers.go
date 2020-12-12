@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"stephenbell.dev/ufo-site/pkg/models"
@@ -17,31 +18,58 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 // Route handler for the form for reporting a sighting
 func (app *application) reportSightingForm(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Report a sighting..."))
+	app.renderTemplate(w, r, "create.page.tmpl", nil)
 }
 
 // Route handler for the sighting reporter
 func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 
-	userID := 10
-	datetime := time.Now()
-	season := "fall"
-	city := "boston"
-	state := "ma"
-	country := "us"
-	shape := "triangle"
-	duration := 180
-	lat := 71.01040
-	long := -43.0220
+	city := r.PostForm.Get("city")
+	state := r.PostForm.Get("state")
+	shape := r.PostForm.Get("shape")
+	duration := r.PostForm.Get("duration")
 
-	id, err := app.sightings.Insert(userID, datetime, season, city, state, country, shape, duration, lat, long)
+	errors := make(map[string]string)
 
+	if strings.TrimSpace(city) == "" {
+		errors["city"] = "This field cannot be blank"
+	}
+
+	if strings.TrimSpace(duration) == "" {
+		errors["duration"] = "This field cannot be blank"
+	}
+
+	if len(errors) > 0 {
+		app.renderTemplate(w, r, "create.page.tmpl", &templateData{
+			FormErrors: errors,
+			FormData:   r.PostForm,
+		})
+		return
+	}
+
+	dur, err := strconv.Atoi(duration)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/sighting/:%d", id), http.StatusSeeOther)
+	lat, long := app.getLatAndLong(city, state)
+	state = strings.ToLower(state)
+	state = app.getStateAbbrev(state)
+	season := app.convertTimeToSeason(time.Now())
+
+	id, err := app.sightings.Insert(0, time.Now(), season, city, state, "us", shape, dur, lat, long)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/sighting/%d", id), http.StatusSeeOther)
 }
 
 // Route handler for the statistics page

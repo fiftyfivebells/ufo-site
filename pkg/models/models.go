@@ -24,3 +24,12 @@ type Sighting struct {
 	Latitude  float64
 	Longitude float64
 }
+
+type User struct {
+	ID         int
+	Username   string
+	Email      string
+	HashedPass []byte
+	Created    time.Time
+	Active     bool
+}

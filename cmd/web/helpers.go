@@ -55,6 +55,23 @@ func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, n
 	buf.WriteTo(w)
 }
 
+func (app *application) convertTimeToSeason(time time.Time) string {
+	m := time.Month()
+	var season string
+
+	if m >= 3 && m < 6 {
+		season = "spring"
+	} else if m >= 6 && m < 9 {
+		season = "summer"
+	} else if m >= 9 && m < 12 {
+		season = "fall"
+	} else if m == 1 || m == 2 || m == 12 {
+		season = "winter"
+	}
+
+	return season
+}
+
 func (app *application) getLatAndLong(city, state string) (float64, float64) {
 
 	type geo struct {

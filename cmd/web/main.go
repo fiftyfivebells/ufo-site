@@ -20,6 +20,7 @@ type application struct {
 	session       *sessions.Session
 	sightings     *postgresql.SightingModel
 	templateCache map[string]*template.Template
+	users         *postgresql.UserModel
 }
 
 func main() {
@@ -55,6 +56,7 @@ func main() {
 		session:       session,
 		sightings:     &postgresql.SightingModel{DB: db},
 		templateCache: templateCache,
+		users:         &postgresql.UserModel{DB: db},
 	}
 
 	server := &http.Server{

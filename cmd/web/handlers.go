@@ -69,6 +69,7 @@ func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	app.session.Put(r, "flash", "Sighting successfully reported!")
 	http.Redirect(w, r, fmt.Sprintf("/sighting/%d", id), http.StatusSeeOther)
 }
 
@@ -108,5 +109,32 @@ func (app *application) showSighting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.renderTemplate(w, r, "show.page.tmpl", &templateData{Sighting: s})
+	app.renderTemplate(w, r, "show.page.tmpl", &templateData{
+		Sighting: s,
+	})
+}
+
+// Display the register user form
+func (app *application) registerUserForm(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Display the register user form...")
+}
+
+// Insert user into the database
+func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Register the user...")
+}
+
+// Display the user login form
+func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Display the user login form...")
+}
+
+// Log the user into the site
+func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Log the user in...")
+}
+
+// Log the user out
+func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Log the user out...")
 }

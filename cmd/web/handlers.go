@@ -112,7 +112,24 @@ func (app *application) registerUserForm(w http.ResponseWriter, r *http.Request)
 
 // Insert user into the database
 func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Register the user...")
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("name", "email", "password")
+	form.MaxLength("name", 255)
+	form.MaxLength("email", 255)
+	form.MatchesPattern("email", forms.EmailRX)
+	form.MinLength("password", 8)
+
+	if !form.Valid() {
+		app.renderTemplate(w, r, "register.page.tmpl", &templateData{Form: form})
+	}
+
+	fmt.Fprintln(w, "Create a new user...")
 }
 
 // Display the user login form

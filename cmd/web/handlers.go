@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"stephenbell.dev/ufo-site/pkg/forms"
 	"stephenbell.dev/ufo-site/pkg/models"
 )
 
@@ -104,7 +105,9 @@ func (app *application) showSighting(w http.ResponseWriter, r *http.Request) {
 
 // Display the register user form
 func (app *application) registerUserForm(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Display the register user form...")
+	app.renderTemplate(w, r, "register.page.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
 }
 
 // Insert user into the database

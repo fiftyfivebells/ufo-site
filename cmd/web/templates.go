@@ -2,18 +2,18 @@ package main
 
 import (
 	"html/template"
-	"net/url"
 	"path/filepath"
+
+	"stephenbell.dev/ufo-site/pkg/forms"
 	"stephenbell.dev/ufo-site/pkg/models"
 )
 
 type templateData struct {
 	Flash       string
+	Form        *forms.Form
 	Sighting    *models.Sighting
 	Sightings   []*models.Sighting
 	CurrentYear int
-	FormData    url.Values
-	FormErrors  map[string]string
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {

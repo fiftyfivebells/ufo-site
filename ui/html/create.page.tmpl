@@ -4,16 +4,17 @@
 
 {{define "main"}}
 <form action="/report" method="POST">
+  {{with .Form}}
   <div>
     <label>City:</label>
-    {{with .FormErrors.city}}
+    {{with .Errors.Get "city"}}
     <label>{{.}}</label>
     {{end}}
-    <input type="text" name="city" value='{{.FormData.Get "city"}}'>
+    <input type="text" name="city" value='{{.Get "city"}}'>
   </div>
   <div>
     <label>State:</label>
-    <select name="state" selected='{{.FormData.Get "state"}}'>
+    <select name="state" selected='{{.Get "state"}}'>
 	    <option value="Alabama">Alabama</option>
 	    <option value="Alaska">Alaska</option>
 	    <option value="Arizona">Arizona</option>
@@ -69,17 +70,18 @@
   </div>
   <div>
     <label>Shape:</label>
-    <input type="text" name="shape" value='{{.FormData.Get "shape"}}'>
+    <input type="text" name="shape" value='{{.Get "shape"}}'>
   </div>
   <div>
     <label>Duration (seconds):</label>
-    {{with .FormErrors.duration}}
+    {{with .Errors.Get "duration"}}
     <label>{{.}}</label>
     {{end}}
-    <input type="text" name="duration" value='{{.FormData.Get "duration"}}'>
+    <input type="text" name="duration" value='{{.Get "duration"}}'>
   </div>
   <div>
     <input type="submit" value="Report Sighting">
   </div>
+  {{end}}
 </form>
 {{end}}

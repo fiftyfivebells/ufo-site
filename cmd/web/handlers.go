@@ -18,7 +18,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 // Route handler for the form for reporting a sighting
 func (app *application) reportSightingForm(w http.ResponseWriter, r *http.Request) {
-	app.renderTemplate(w, r, "create.page.tmpl", nil)
+	app.renderTemplate(w, r, "create.page.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
 }
 
 // Route handler for the sighting reporter
@@ -29,41 +31,27 @@ func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	city := r.PostForm.Get("city")
-	state := r.PostForm.Get("state")
-	shape := r.PostForm.Get("shape")
-	duration := r.PostForm.Get("duration")
+	form := forms.New(r.PostForm)
 
-	errors := make(map[string]string)
+	form.Required("city", "state", "shape", "duration")
 
-	if strings.TrimSpace(city) == "" {
-		errors["city"] = "This field cannot be blank"
-	}
-
-	if strings.TrimSpace(duration) == "" {
-		errors["duration"] = "This field cannot be blank"
-	}
-
-	if len(errors) > 0 {
-		app.renderTemplate(w, r, "create.page.tmpl", &templateData{
-			FormErrors: errors,
-			FormData:   r.PostForm,
-		})
+	if !form.Valid() {
+		app.renderTemplate(w, r, "create.page.tmpl", &templateData{Form: form})
 		return
 	}
 
-	dur, err := strconv.Atoi(duration)
+	dur, err := strconv.Atoi(form.Get("duration"))
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	lat, long := app.getLatAndLong(city, state)
-	state = strings.ToLower(state)
+	lat, long := app.getLatAndLong(form.Get("city"), form.Get("state"))
+	state := strings.ToLower(form.Get("state"))
 	state = app.getStateAbbrev(state)
 	season := app.convertTimeToSeason(time.Now())
 
-	id, err := app.sightings.Insert(0, time.Now(), season, city, state, "us", shape, dur, lat, long)
+	id, err := app.sightings.Insert(0, time.Now(), season, form.Get("city"), state, "us", form.Get("shape"), dur, lat, long)
 	if err != nil {
 		app.serverError(w, err)
 		return

@@ -14,7 +14,7 @@ func (app *application) Routes() http.Handler {
 	mux := pat.New()
 	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
 	mux.Get("/report", dynamicMiddleware.ThenFunc(app.reportSightingForm))
-	mux.Post("/report", dynamicMiddleware.ThenFunc(app.reportSighting))
+	mux.Post("/report", dynamicMiddleware.Append(app.requireAuthorization).ThenFunc(app.reportSighting))
 	mux.Get("/stats", dynamicMiddleware.ThenFunc(app.showStatistics))
 	mux.Get("/sighting/:id", dynamicMiddleware.ThenFunc(app.showSighting))
 	mux.Get("/sightings/:state", dynamicMiddleware.ThenFunc(app.showSightings))
@@ -24,7 +24,7 @@ func (app *application) Routes() http.Handler {
 	mux.Post("/user/register", dynamicMiddleware.ThenFunc(app.registerUser))
 	mux.Get("/user/login", dynamicMiddleware.ThenFunc(app.loginUserForm))
 	mux.Post("/user/login", dynamicMiddleware.ThenFunc(app.loginUser))
-	mux.Post("/user/logout", dynamicMiddleware.ThenFunc(app.logoutUser))
+	mux.Post("/user/logout", dynamicMiddleware.Append(app.requireAuthorization).ThenFunc(app.logoutUser))
 
 	// file server to serve static files
 	fileServer := http.FileServer(http.Dir("./ui/static"))

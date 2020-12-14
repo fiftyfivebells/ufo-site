@@ -9,12 +9,13 @@ import (
 )
 
 type templateData struct {
+	CSRFToken       string
+	CurrentYear     int
 	Flash           string
 	Form            *forms.Form
+	IsAuthenticated bool
 	Sighting        *models.Sighting
 	Sightings       []*models.Sighting
-	CurrentYear     int
-	IsAuthenticated bool
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {

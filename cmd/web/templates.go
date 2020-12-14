@@ -9,11 +9,12 @@ import (
 )
 
 type templateData struct {
-	Flash       string
-	Form        *forms.Form
-	Sighting    *models.Sighting
-	Sightings   []*models.Sighting
-	CurrentYear int
+	Flash           string
+	Form            *forms.Form
+	Sighting        *models.Sighting
+	Sightings       []*models.Sighting
+	CurrentYear     int
+	IsAuthenticated bool
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {

@@ -38,7 +38,31 @@ VALUES($1, $2, $3, NOW())`
 }
 
 func (m *UserModel) Authenticate(email, pass string) (int, error) {
-	return 0, nil
+	var id int
+	var hashedPass []byte
+
+	stmt := "SELECT id, hashed_pass FROM users WHERE email = $1 AND active = TRUE"
+	row := m.DB.QueryRow(stmt, email)
+
+	err := row.Scan(&id, &hashedPass)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return -1, models.ErrInvalidCredentials
+		} else {
+			return -1, err
+		}
+	}
+
+	err = bcrypt.CompareHashAndPassword(hashedPass, []byte(pass))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return -1, models.ErrInvalidCredentials
+		} else {
+			return -1, err
+		}
+	}
+
+	return id, nil
 }
 
 func (m *UserModel) Get(email, pass string) (*models.User, error) {

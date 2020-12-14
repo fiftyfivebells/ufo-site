@@ -129,17 +129,48 @@ func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
 		app.renderTemplate(w, r, "register.page.tmpl", &templateData{Form: form})
 	}
 
-	fmt.Fprintln(w, "Create a new user...")
+	err = app.users.Insert(form.Get("name"), form.Get("email"), form.Get("password"))
+	if err != nil {
+		if errors.Is(err, models.ErrDuplicateEmail) {
+			form.Errors.Add("email", "Email is already in use")
+			app.renderTemplate(w, r, "register.page.tmpl", &templateData{Form: form})
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	app.session.Put(r, "flash", "Your signup was successful. Please log in.")
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
 // Display the user login form
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Display the user login form...")
+	app.renderTemplate(w, r, "login.page.tmpl", &templateData{Form: forms.New(nil)})
 }
 
 // Log the user into the site
 func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Log the user in...")
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	id, err := app.users.Authenticate(form.Get("email"), form.Get("password"))
+	if err != nil {
+		if errors.Is(err, models.ErrInvalidCredentials) {
+			form.Errors.Add("generic", "Email or password is incorrect")
+			app.renderTemplate(w, r, "login.page.tmpl", &templateData{Form: form})
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	app.session.Put(r, "authenticatedUserID", id)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // Log the user out

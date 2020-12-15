@@ -4,7 +4,7 @@
 
 {{define "main"}}
 <form action="/report" method="POST">
-  <input type="hidden" name="csrf_token" value="{{.CSRFToken}}"
+  <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
   {{with .Form}}
   <div>
     <label>City:</label>

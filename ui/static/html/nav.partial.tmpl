@@ -1,0 +1,30 @@
+{{define "nav"}}
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Eyes on the Skies</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Home</a></li>
+        {{if .IsAuthenticated}}
+        <li><a href="/report">Report a Sighting</a></li>
+        {{end}}
+      </ul>
+      {{if .IsAuthenticated}}
+<!--       <form class="form-inline my-2 my-lg-0" action="/user/logout" method="POST">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+     <button>Logout</button></form>-->
+      <ul class="nav navbar-nav navbar-right">
+        <li>Logout</li>
+      </ul>
+      {{else}}
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/user/register">Register</a></li>
+        <li><a href="/user/login">Login</a></li>
+      </ul>
+      {{end}}
+    </div>
+  </div>
+</nav> 
+{{end}}

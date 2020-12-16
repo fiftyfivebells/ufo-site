@@ -37,8 +37,8 @@ func (m *SightingModel) InsertSighting(userID int, datetime time.Time, season, c
 	return id, nil
 }
 
-func (m *SightingModel) InsertNoSighting(userID int, datetime time.Time, season, city, state string, lat, long float64, sighted int) (int, error) {
-	stmt := `INSERT INTO sightings (user_id, datetime, season, city, state, country, latitude, longitude, sighted) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+func (m *SightingModel) InsertNoSighting(userID int, datetime time.Time, season, city, state, country string, lat, long float64, sighted int) (int, error) {
+	stmt := `INSERT INTO sightings (user_id, datetime, season, city, state, country, latitude, longitude, sighted) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING index`
 
 	var id int
 	err := m.DB.QueryRow(stmt,

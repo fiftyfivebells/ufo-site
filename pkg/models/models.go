@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"errors"
 	"time"
 )
@@ -19,8 +20,8 @@ type Sighting struct {
 	City      string
 	State     string
 	Country   string
-	Shape     string
-	Duration  int
+	Shape     sql.NullString
+	Duration  sql.NullInt64
 	Latitude  float64
 	Longitude float64
 	Sighted   int

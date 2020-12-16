@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 )
@@ -82,6 +83,13 @@ func (f *Form) Valid() bool {
 	return len(f.Errors) == 0
 }
 
+func (f *Form) ValidNumericField(field string) {
+	_, err := strconv.Atoi(field)
+	if err != nil {
+		f.Errors.Add(field, "This field must be a number")
+	}
+}
+
 func (f *Form) IsYesChecked() bool {
 	value := f.Get("sighting")
 	if value != "" {
@@ -89,4 +97,3 @@ func (f *Form) IsYesChecked() bool {
 	}
 	return false
 }
-

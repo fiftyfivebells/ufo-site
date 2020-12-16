@@ -47,6 +47,7 @@ func (m *SightingModel) InsertNoSighting(userID int, datetime time.Time, season,
 		season,
 		city,
 		state,
+		country,
 		lat,
 		long,
 		sighted).Scan(&id)
@@ -74,7 +75,7 @@ func (m *SightingModel) Get(id int) (*models.Sighting, error) {
 		&s.Duration,
 		&s.Latitude,
 		&s.Longitude,
-		&s.Sighting)
+		&s.Sighted)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

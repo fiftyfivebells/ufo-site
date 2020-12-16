@@ -14,11 +14,13 @@
   <div>
     <p>Reported: {{.Sighting.Datetime.Format "Monday, January _2, 2006, 03:04:05 PM"}}</p>
   </div>
+  {{if .Sighting.Shape.Valid}}
   <div>
-    <p>Shape: {{.Sighting.Shape}}</p>
+    <p>Shape: {{.Sighting.Shape.String}}</p>
   </div>
   <div>
-    <p>Duration: {{.Sighting.Duration}}</p>
+    <p>Duration: {{.Sighting.Duration.Int64}}</p>
   </div>
+  {{end}}
 </div>
 {{end}}

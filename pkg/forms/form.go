@@ -81,3 +81,12 @@ func (f *Form) MatchesPattern(field string, pattern *regexp.Regexp) {
 func (f *Form) Valid() bool {
 	return len(f.Errors) == 0
 }
+
+func (f *Form) IsYesChecked() bool {
+	value := f.Get("sighting")
+	if value != "" {
+		return f.Get("sighting") == "Yes"
+	}
+	return false
+}
+

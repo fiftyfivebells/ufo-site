@@ -23,7 +23,7 @@ type Sighting struct {
 	Duration  int
 	Latitude  float64
 	Longitude float64
-	Sighting  int
+	Sighted   int
 }
 
 type User struct {

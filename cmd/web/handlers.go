@@ -56,6 +56,11 @@ func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverError(w, err)
 		return
+	userID := 0
+	if app.session.Exists(r, "authenticatedUserID") {
+		userID = app.session.Get(r, "authenticatedUserID").(int)
+	}
+
 	}
 
 	app.session.Put(r, "flash", "Sighting successfully reported!")

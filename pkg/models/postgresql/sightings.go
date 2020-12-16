@@ -12,9 +12,9 @@ type SightingModel struct {
 	DB *sql.DB
 }
 
-func (m *SightingModel) Insert(userID int, datetime time.Time, season, city, state, country, shape string, duration int, lat, long float64) (int, error) {
+func (m *SightingModel) InsertSighting(userID int, datetime time.Time, season, city, state, country, shape string, duration int, lat, long float64, sighted int) (int, error) {
 
-	stmt := `INSERT INTO sightings (user_id, datetime, season, city, state, country, shape, duration, latitude, longitude) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING index`
+	stmt := `INSERT INTO sightings (user_id, datetime, season, city, state, country, shape, duration, latitude, longitude, sighted) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING index`
 
 	var id int
 	err := m.DB.QueryRow(stmt,
@@ -27,7 +27,29 @@ func (m *SightingModel) Insert(userID int, datetime time.Time, season, city, sta
 		shape,
 		duration,
 		lat,
-		long).Scan(&id)
+		long,
+		sighted).Scan(&id)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return id, nil
+}
+
+func (m *SightingModel) InsertNoSighting(userID int, datetime time.Time, season, city, state string, lat, long float64, sighted int) (int, error) {
+	stmt := `INSERT INTO sightings (user_id, datetime, season, city, state, country, latitude, longitude, sighted) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+
+	var id int
+	err := m.DB.QueryRow(stmt,
+		userID,
+		datetime,
+		season,
+		city,
+		state,
+		lat,
+		long,
+		sighted).Scan(&id)
 
 	if err != nil {
 		return -1, err
@@ -51,7 +73,8 @@ func (m *SightingModel) Get(id int) (*models.Sighting, error) {
 		&s.Shape,
 		&s.Duration,
 		&s.Latitude,
-		&s.Longitude)
+		&s.Longitude,
+		&s.Sighting)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

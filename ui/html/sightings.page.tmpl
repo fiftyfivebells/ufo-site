@@ -1,0 +1,35 @@
+{{template "base" .}}
+
+{{define "title"}}Sightings{{end}}
+
+{{define "main"}}
+<h2 class="text-center">Sightings by State</h2>
+{{if .Sightings}}
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th>Index</th>
+        <th>Date</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Shape</th>
+        <th>Duration (seconds)</th>
+      </tr>
+    </thead>
+    {{range .Sightings}}
+    <tr>
+      <td><a href="/sighting/{{.Index}}">{{.Index}}</a></td>
+      <td>{{.Datetime.Format "1/02/2006"}}</td>
+      <td>{{.City}}</td>
+      <td>{{.State}}</td>
+      <td>{{.Shape}}</td>
+      <td>{{.Duration}}</td>
+    </tr>
+    {{end}}
+  </table>
+</div>
+{{else}}
+<p>Nothing to see yet</p>
+{{end}}
+{{end}}

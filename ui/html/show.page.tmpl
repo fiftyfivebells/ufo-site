@@ -1,0 +1,24 @@
+{{template "base" .}}
+
+{{define "title"}}Sighting #{{.Sighting.Index}}{{end}}
+
+{{define "main"}}
+<div class="container d-flex justify-content-center">
+  <div class="page-header d-flex justify-content-center">
+    <h2>Sighting #{{.Sighting.Index}}</h2>
+  </div>
+
+  <div>
+    <h3>{{.Sighting.City}}, {{.Sighting.State}}</h3>
+  </div>
+  <div>
+    <p>Reported: {{.Sighting.Datetime.Format "Monday, January _2, 2006, 03:04:05 PM"}}</p>
+  </div>
+  <div>
+    <p>Shape: {{.Sighting.Shape}}</p>
+  </div>
+  <div>
+    <p>Duration: {{.Sighting.Duration}}</p>
+  </div>
+</div>
+{{end}}

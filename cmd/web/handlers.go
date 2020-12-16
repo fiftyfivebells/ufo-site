@@ -37,6 +37,7 @@ func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
 
 	if sighting == "Yes" {
 		form.Required("city", "state", "shape", "duration")
+		form.ValidNumericField("duration")
 	} else if sighting == "No" {
 		form.Required("city", "state")
 	}

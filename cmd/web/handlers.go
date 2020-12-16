@@ -33,37 +33,56 @@ func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := forms.New(r.PostForm)
+	sighting := form.Get("sighting")
 
-	form.Required("city", "state", "shape", "duration")
+	if sighting == "Yes" {
+		form.Required("city", "state", "shape", "duration")
+	} else if sighting == "No" {
+		form.Required("city", "state")
+	}
 
 	if !form.Valid() {
 		app.renderTemplate(w, r, "create.page.tmpl", &templateData{Form: form})
 		return
 	}
 
-	dur, err := strconv.Atoi(form.Get("duration"))
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
 	lat, long := app.getLatAndLong(form.Get("city"), form.Get("state"))
 	state := strings.ToLower(form.Get("state"))
+	city := strings.ToLower(form.Get("city"))
 	state = app.getStateAbbrev(state)
 	season := app.convertTimeToSeason(time.Now())
 
-	id, err := app.sightings.Insert(0, time.Now(), season, form.Get("city"), state, "us", form.Get("shape"), dur, lat, long)
-	if err != nil {
-		app.serverError(w, err)
-		return
 	userID := 0
 	if app.session.Exists(r, "authenticatedUserID") {
 		userID = app.session.Get(r, "authenticatedUserID").(int)
 	}
 
+	var id int
+
+	if sighting == "Yes" {
+		dur, err := strconv.Atoi(form.Get("duration"))
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+
+		shape := strings.ToLower(form.Get("shape"))
+
+		id, err = app.sightings.InsertSighting(userID, time.Now(), season, city, state, "us", shape, dur, lat, long, 1)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+	} else if sighting == "No" {
+		id, err = app.sightings.InsertNoSighting(userID, time.Now(), season, city, state, "us", lat, long, 0)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+	} else {
+		app.serverError(w, errors.New("Something interesting went wrong."))
 	}
 
-	app.session.Put(r, "flash", "Sighting successfully reported!")
 	http.Redirect(w, r, fmt.Sprintf("/sighting/%d", id), http.StatusSeeOther)
 }
 

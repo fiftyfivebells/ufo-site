@@ -90,7 +90,7 @@ func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
 
 // Route handler for the statistics page
 func (app *application) showStatistics(w http.ResponseWriter, r *http.Request) {
-	return
+	app.renderTemplate(w, r, "stats.page.tmpl", &templateData{})
 }
 
 // Route handler for sightings page

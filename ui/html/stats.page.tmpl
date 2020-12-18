@@ -1,0 +1,65 @@
+{{template "base" .}}
+
+{{define "title"}}Statistics{{end}}
+
+{{define "main"}}
+<div class="container">
+  <div class="row my-2">
+    <div class="col-md-12 py-1">
+      <h2 class="text-center">Sightings by State</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 py-1">
+      <div class="card">
+        <div class="card-body">
+          <canvas id="stateChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 py-1">
+      <div class="card">
+        <div class="card-body">
+          <br>
+          <br>
+          <br>
+          <strong>Hover your mouse over the bars to see total counts for each state.</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <h2 class="text-center">Sightings by Season</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <canvas id="seasonChart"></canvas>
+    </div>
+    <div class="col-md-4">
+      <br>
+      <br>
+      <br>
+      <strong>Hover your mouse over the bars to see the total counts for each state.</strong>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <h2 class="text-center">Latitude and Longitude of Sightings</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div id="latLongChart"></div>
+    </div>
+    <div class="col-md-6">
+      <div id="clusterChart"></div>
+    </div>
+  </div>
+</div>
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js" type="text/javascript"></script>
+<script src="/static/js/visuals.js" type="text/javascript"></script>
+
+{{end}}

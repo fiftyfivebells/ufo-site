@@ -13,18 +13,18 @@ var (
 )
 
 type Sighting struct {
-	Index     int
-	UserID    int
-	Datetime  time.Time
-	Season    string
-	City      string
-	State     string
-	Country   string
-	Shape     sql.NullString
-	Duration  sql.NullInt64
-	Latitude  float64
-	Longitude float64
-	Sighted   int
+	Index     int            `json:"index"`
+	UserID    int            `json:"user_id"`
+	Datetime  time.Time      `json:"datetime"`
+	Season    string         `json:"season"`
+	City      string         `json:"city"`
+	State     string         `json:"state"`
+	Country   string         `json:"country"`
+	Shape     sql.NullString `json:"shape"`
+	Duration  sql.NullInt64  `json:"duration"`
+	Latitude  float64        `json:"lat"`
+	Longitude float64        `json:"long"`
+	Sighted   int            `json:"sighted"`
 }
 
 type User struct {

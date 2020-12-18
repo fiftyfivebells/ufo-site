@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -15,7 +16,47 @@ import (
 
 // Route handler for the home page
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	app.renderTemplate(w, r, "home.page.tmpl", nil)
+	app.renderTemplate(w, r, "home.page.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
+}
+
+// POST request to home page to get prediction
+func (app *application) getPrediction(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+
+	form.Required("city", "state", "date")
+
+	if !form.Valid() {
+		app.renderTemplate(w, r, "home.page.tmpl", &templateData{Form: form})
+		return
+	}
+
+	date, _ := time.Parse("2014-10-02", form.Get("date"))
+
+	season := app.convertTimeToSeason(date)
+	lat, long := app.getLatAndLong(form.Get("city"), form.Get("state"))
+	cmd := exec.Command("python", "pkg/python/logistic_regression.py", fmt.Sprintf("%f", lat), fmt.Sprintf("%f", long), season)
+
+	res, err := cmd.CombinedOutput()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	f, _ := strconv.ParseFloat(string(res), 64)
+	prediction := fmt.Sprintf("%.2f", f*100)
+
+	app.renderTemplate(w, r, "home.page.tmpl", &templateData{
+		Form:       forms.New(nil),
+		Prediction: prediction,
+	})
 }
 
 // Route handler for the form for reporting a sighting

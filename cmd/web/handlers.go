@@ -136,9 +136,7 @@ func (app *application) showStatistics(w http.ResponseWriter, r *http.Request) {
 
 // Route handler for sightings page
 func (app *application) showSightings(w http.ResponseWriter, r *http.Request) {
-	state := r.URL.Query().Get(":state")
-
-	s, err := app.sightings.GetByState(state)
+	s, err := app.sightings.GetEveryItem()
 	if err != nil {
 		http.NotFound(w, r)
 		return

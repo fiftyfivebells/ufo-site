@@ -17,6 +17,7 @@ func (app *application) Routes() http.Handler {
 	mux.Get("/report", dynamicMiddleware.ThenFunc(app.reportSightingForm))
 	mux.Post("/report", dynamicMiddleware.Append(app.requireAuthorization).ThenFunc(app.reportSighting))
 	mux.Get("/stats", dynamicMiddleware.ThenFunc(app.showStatistics))
+	mux.Get("/sightings", dynamicMiddleware.ThenFunc(app.showSightings))
 	mux.Get("/sightings/all", dynamicMiddleware.ThenFunc(app.sendSightings))
 	mux.Get("/sighting/:id", dynamicMiddleware.ThenFunc(app.showSighting))
 	mux.Get("/sightings/:state", dynamicMiddleware.ThenFunc(app.showSightings))

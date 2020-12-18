@@ -7,6 +7,37 @@
   <div class="page-header">
     <h2>Eyes on the Skies Home page</h2>
   </div>
-  <p>Nothing to see yet!</p>
+  <form class="form-signin" action="/" method="POST" novalidate>
+    <h3 class="form-signin-heading">Where are you going and when?</h3>
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    {{with .Form}}
+    <div>
+      <label class="sr-only">City:</label>
+      {{with .Errors.Get "city"}}
+      <label>{{.}}</label>
+      {{end}}
+      <input class="form-control" type="text" name="city" placeholder="City">
+    </div>
+    <div>
+      <label class="sr-only">State:</label>
+      {{with .Errors.Get "state"}}
+      <label>{{.}}</label>
+      {{end}}
+      <input class="form-control" type="text" name="state" placeholder="State">
+    </div>
+    <div>
+      <label class="sr-only">Date:</label>
+      {{with .Errors.Get "date"}}
+      <label>{{.}}</label>
+      {{end}}
+      <input class="form-control" type="date" name="date">
+    </div>
+    <button type="submit" class="btn btn-lg btn-block btn-primary">Get Likelihood</button>
+    {{end}}
+  </form>
+
+  {{with .Prediction}}
+  <h3 class="text-center">You are {{.}}% likely to see a UFO on your trip!</h3>
+  {{end}}
 </div>
 {{end}}

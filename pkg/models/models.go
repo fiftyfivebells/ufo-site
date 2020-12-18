@@ -27,6 +27,8 @@ type Sighting struct {
 	Sighted   int            `json:"sighted"`
 }
 
+type Sightings []Sighting
+
 type User struct {
 	ID         int
 	Username   string

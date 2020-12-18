@@ -181,6 +181,7 @@ func (app *application) getStateAbbrev(state string) string {
 	abbrevs["west virginia"] = "wv"
 	abbrevs["wisconsin"] = "wi"
 	abbrevs["wyoming"] = "wy"
+	abbrevs["puerto rico"] = "pr"
 
 	return abbrevs[state]
 }

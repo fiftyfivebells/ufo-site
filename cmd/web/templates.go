@@ -14,6 +14,7 @@ type templateData struct {
 	Flash           string
 	Form            *forms.Form
 	IsAuthenticated bool
+	Prediction      string
 	Sighting        *models.Sighting
 	Sightings       []*models.Sighting
 }

@@ -23,8 +23,16 @@
       <td>{{.Datetime.Format "1/02/2006"}}</td>
       <td>{{.City}}</td>
       <td>{{.State}}</td>
-      <td>{{.Shape}}</td>
-      <td>{{.Duration}}</td>
+      {{if .Shape.Valid}}
+      <td>{{.Shape.String}}</td>
+      {{else}}
+      <td>""</td>
+      {{end}}
+      {{if .Duration.Valid}}
+      <td>{{.Duration.Int64}}</td>
+      {{else}}
+      <td>""</td>
+      {{end}}
     </tr>
     {{end}}
   </table>

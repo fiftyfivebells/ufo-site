@@ -59,6 +59,47 @@ func (m *SightingModel) InsertNoSighting(userID int, datetime time.Time, season,
 	return id, nil
 }
 
+func (m *SightingModel) GetEveryItem() ([]*models.Sighting, error) {
+	stmt := "SELECT * FROM sightings"
+
+	rows, err := m.DB.Query(stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	sightings := []*models.Sighting{}
+
+	for rows.Next() {
+		s := &models.Sighting{}
+		err := rows.Scan(&s.Index,
+			&s.UserID,
+			&s.Datetime,
+			&s.Season,
+			&s.City,
+			&s.State,
+			&s.Country,
+			&s.Shape,
+			&s.Duration,
+			&s.Latitude,
+			&s.Longitude,
+			&s.Sighted)
+
+		if err != nil {
+			return nil, err
+		}
+
+		sightings = append(sightings, s)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return sightings, nil
+}
+
 func (m *SightingModel) GetAll() ([]*models.Sighting, error) {
 	stmt := `SELECT * from sightings WHERE sighted = 1`
 

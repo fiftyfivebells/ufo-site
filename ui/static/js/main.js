@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', (event) => {
-  console.log("loaded");
+
   // Add event listeners to the radio buttons on the create sighting form. If the
   // radio is No, hide UFO specific details. Otherwise, show them.
   if (document.querySelector("input[name='sighting']")) {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -126,6 +127,25 @@ func (app *application) showSighting(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "show.page.tmpl", &templateData{
 		Sighting: s,
 	})
+}
+
+// Send list of all sightings as JSON
+func (app *application) sendSightings(w http.ResponseWriter, r *http.Request) {
+	s, err := app.sightings.GetAll()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.NotFound(w, r)
+		return
+	}
+
+	json, err := json.Marshal(s)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(json)
 }
 
 // Display the register user form

@@ -103,23 +103,45 @@ func (app *application) getLatAndLong(city, state string) (float64, float64) {
 	}
 
 	key := os.Getenv("POSITIONSTACK_API")
-	query := fmt.Sprintf("http://api.positionstack.com/v1/forward?access_key=%s&query=%s&region=%s", key, city, state)
+	query := "http://api.positionstack.com/v1/forward"
+	// query := fmt.Sprintf("http://api.positionstack.com/v1/forward?access_key=%s&query=%s&region=%s", key, city, state)
 
-	resp, err := http.Get(query)
+	geoClient := http.Client{
+		Timeout: time.Second * 2,
+	}
+
+	req, err := http.NewRequest(http.MethodGet, query, nil)
 	if err != nil {
 		app.errorLog.Println(err)
 		return -1, -1
 	}
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	q := req.URL.Query()
+	q.Add("access_key", key)
+	q.Add("query", city)
+	q.Add("region", state)
+
+	req.URL.RawQuery = q.Encode()
+
+	res, err := geoClient.Do(req)
 	if err != nil {
 		app.errorLog.Println(err)
 		return -1, -1
 	}
 
-	var gl geoList
+	if res.Body != nil {
+		defer res.Body.Close()
+	}
 
-	err = json.Unmarshal(bodyBytes, &gl)
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		app.errorLog.Println(err)
+		return -1, -1
+	}
+
+	gl := geoList{}
+
+	err = json.Unmarshal(body, &gl)
 	if err != nil {
 		app.errorLog.Println(err)
 		return 0, 0

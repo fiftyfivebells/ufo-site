@@ -23,7 +23,7 @@
           <br>
           <br>
           <br>
-          <strong>Hover your mouse over the bars to see total counts for each state.</strong>
+          <strong>The chart to the left shows the total number of sightings broken down by state. Hover your mouse over the bars to see total counts for each state.</strong>
         </div>
       </div>
     </div>
@@ -41,7 +41,7 @@
       <br>
       <br>
       <br>
-      <strong>Hover your mouse over the bars to see the total counts for each state.</strong>
+      <strong>The chart to the left shows the total number of sightings broken down by season. Hover your mouse over the bars to see the total counts for each season.</strong>
     </div>
   </div>
 </div>
@@ -57,8 +57,11 @@
       <div id="clusterChart"></div>
     </div>
   </div>
+  <div class="row">
+    <strong>The above two graphs show plots of latitude and longitude for all sightings. The left shows the data plotted as is, while the right is the data after running the K-means clustering algorithm. The different colors show the clear distinction in regions while taking into account the latitude, longitude, and season of each sighting. Hover your mouse over the points to see the latitude/longitude pair for each point.</strong>
+  </div>
 </div>
-<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3.v4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js" type="text/javascript"></script>
 <script src="/static/js/visuals.js" type="text/javascript"></script>
 

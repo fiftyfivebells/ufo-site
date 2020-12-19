@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 
 	"stephenbell.dev/ufo-site/pkg/models/postgresql"
 

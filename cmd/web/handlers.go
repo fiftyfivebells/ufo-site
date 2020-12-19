@@ -131,18 +131,13 @@ func (app *application) reportSighting(w http.ResponseWriter, r *http.Request) {
 
 // Route handler for the statistics page
 func (app *application) showStatistics(w http.ResponseWriter, r *http.Request) {
+
 	app.renderTemplate(w, r, "stats.page.tmpl", &templateData{})
 }
 
 // Route handler for sightings page
 func (app *application) showSightings(w http.ResponseWriter, r *http.Request) {
-	s, err := app.sightings.GetEveryItem()
-	if err != nil {
-		http.NotFound(w, r)
-		return
-	}
-
-	app.renderTemplate(w, r, "sightings.page.tmpl", &templateData{Sightings: s})
+	app.renderTemplate(w, r, "sightings.page.tmpl", &templateData{})
 }
 
 // Route handler for showing an individual sighting

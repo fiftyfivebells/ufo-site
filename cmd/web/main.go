@@ -13,7 +13,6 @@ import (
 	"stephenbell.dev/ufo-site/pkg/models/postgresql"
 
 	"github.com/golangcollege/sessions"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -31,10 +30,10 @@ type application struct {
 }
 
 func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal(err)
-	}
+	// //	err := godotenv.Load(".env")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	dbAddr := os.Getenv("DB_ADDR")
 	dbPort := os.Getenv("DB_PORT")

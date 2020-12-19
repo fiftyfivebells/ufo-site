@@ -1,1 +1,1 @@
-web: cmd/web/main
+web: bin/web

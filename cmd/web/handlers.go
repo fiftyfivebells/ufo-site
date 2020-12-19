@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
-	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -42,20 +42,44 @@ func (app *application) getPrediction(w http.ResponseWriter, r *http.Request) {
 
 	season := app.convertTimeToSeason(date)
 	lat, long := app.getLatAndLong(form.Get("city"), form.Get("state"))
-	cmd := exec.Command("python", "pkg/python/logistic_regression.py", fmt.Sprintf("%f", lat), fmt.Sprintf("%f", long), season)
 
-	res, err := cmd.CombinedOutput()
+	query := "https://ufo-log-reg.herokuapp.com/predict"
+	req, err := http.NewRequest(http.MethodGet, query, nil)
 	if err != nil {
-		app.serverError(w, err)
+		app.errorLog.Println(err)
 		return
 	}
 
-	f, _ := strconv.ParseFloat(string(res), 64)
-	prediction := fmt.Sprintf("%.2f", f*100)
+	q := req.URL.Query()
+	q.Add("season", season)
+	q.Add("lat", fmt.Sprintf("%s", lat))
+	q.Add("lon", fmt.Sprintf("%s", long))
+
+	req.URL.RawQuery = q.Encode()
+
+	predictClient := http.Client{
+		Timeout: time.Second * 5,
+	}
+
+	res, err := predictClient.Do(req)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+	if res.Body != nil {
+		defer res.Body.Close()
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
 
 	app.renderTemplate(w, r, "home.page.tmpl", &templateData{
 		Form:       forms.New(nil),
-		Prediction: prediction,
+		Prediction: string(body),
 	})
 }
 

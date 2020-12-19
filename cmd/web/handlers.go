@@ -52,8 +52,8 @@ func (app *application) getPrediction(w http.ResponseWriter, r *http.Request) {
 
 	q := req.URL.Query()
 	q.Add("season", season)
-	q.Add("lat", fmt.Sprintf("%s", lat))
-	q.Add("lon", fmt.Sprintf("%s", long))
+	q.Add("lat", fmt.Sprintf("%f", lat))
+	q.Add("lon", fmt.Sprintf("%f", long))
 
 	req.URL.RawQuery = q.Encode()
 

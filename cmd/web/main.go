@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 	"stephenbell.dev/ufo-site/pkg/models/postgresql"
 
 	"github.com/golangcollege/sessions"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -29,8 +31,19 @@ type application struct {
 }
 
 func main() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dbAddr := os.Getenv("DB_ADDR")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+	dbPass := os.Getenv("DB_PASS")
+	dbConn := fmt.Sprintf("postgresql://%s:%s@%s:%s/postgres", dbName, dbPass, dbAddr, dbPort)
+
 	addr := flag.String("addr", ":3000", "HTTP network address")
-	dsn := flag.String("dsn", "postgresql://stephen:stephen@localhost:5432/stephendb", "PGSQL data source name")
+	dsn := flag.String("dsn", dbConn, "PGSQL data source name")
 	secret := flag.String("secret", "7dj.12*y4^skqz)ske@3jskv*s+kd1#2", "Secret key")
 
 	flag.Parse()

@@ -77,9 +77,11 @@ func (app *application) getPrediction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	prediction, err := strconv.ParseFloat(string(body), 64)
+
 	app.renderTemplate(w, r, "home.page.tmpl", &templateData{
 		Form:       forms.New(nil),
-		Prediction: string(body),
+		Prediction: fmt.Sprintf("%.2f", prediction),
 	})
 }
 

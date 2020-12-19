@@ -6,12 +6,6 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
 const data = [];
 
-// Get JSON from database and return the Promise of the items
-async function getJson() {
-  const data = await fetch("/sightings/all");
-  const json = await data.json();
-  return json;
-}
 
 // Fill the data array with the items from the database
 async function getSightings() {
@@ -22,6 +16,86 @@ async function getSightings() {
     stateBarChart();
     seasonBarChart();
     latLongChart();
+    kmeansChart();
+  });
+}
+
+// Create scatter plot of kmeans cluster
+function kmeansChart() {
+  const margin = {
+    top: 10,
+    right: 30,
+    bottom: 30,
+    left: 60,
+  };
+  const width = 460 - margin.left - margin.right;
+  const height = 400 - margin.top - margin.bottom;
+
+  const svg = d3.select("#clusterChart")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+              "translate(" + margin.left + ", " + margin.top + ")");
+
+  const color = d3.scaleOrdinal(d3.schemeCategory20);
+
+  d3.csv("/static/clustering.csv", function(data) {
+    const x = d3.scaleLinear()
+            .domain([-200, 150])
+            .range([0, width]);
+
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+    
+    const y = d3.scaleLinear()
+        .domain([-60, 90])
+        .range([height, 0]);
+
+    svg.append("g")
+      .call(d3.axisLeft(y));
+
+    const tooltip = d3.select("#clusterChart")
+          .append("div")
+          .style("opacity", 0)
+          .style("background-color", "white")
+          .style("border", "solid")
+          .style("border-width", "1px")
+          .style("border-radius", "5px")
+          .style("padding", "10px");
+
+    const mouseover = function(d) {
+      tooltip.style("opacity", 1);
+    };
+
+    const mousemove = function(d) {
+      tooltip.html("(" + d.lat + ", " + d.long + ")")
+        .style("left", (d3.mouse(this)[0] + 90) + "px")
+        .style("top", (d3.mouse(this)[1]) + "px");
+    };
+
+    const mouseleave = function(d) {
+      tooltip.transition()
+        .duration(200)
+        .style("opacity", 0);
+    };
+
+  svg.append('g')
+      .selectAll("dot")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", function (d) { return x(d.lat); } )
+      .attr("cy", function (d) { return y(d.long); } )
+      .attr("r", 3)
+      .style("fill", function(d) { return color(d.label); })
+      .style("opacity", 0.7)
+      .style("stroke", "white")
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave);
   });
 }
 
@@ -46,6 +120,31 @@ async function latLongChart() {
               "translate(" + margin.left + ", " + margin.top + ")");
 
 
+  const tooltip = d3.select("#latLongChart")
+        .append("div")
+        .style("opacity", 0)
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("padding", "10px");
+
+  const mouseover = function(d) {
+    tooltip.style("opacity", 1);
+  };
+
+  const mousemove = function(d) {
+    tooltip.html("(" + d.lat + ", " + d.long + ")")
+      .style("left", (d3.mouse(this)[0] + 90) + "px")
+      .style("top", (d3.mouse(this)[1]) + "px");
+  };
+
+  const mouseleave = function(d) {
+    tooltip.transition()
+      .duration(200)
+      .style("opacity", 0);
+  };
+
   const x = d3.scaleLinear()
         .domain([-200, 150])
         .range([0, width]);
@@ -67,8 +166,10 @@ async function latLongChart() {
     .attr("cx", function (d) { return x(d.long);})
     .attr("cy", function (d) { return y(d.lat);})
     .attr("r", 1.5)
-    .style("fill", "#69b3a2");
-
+    .style("fill", "#69b3a2")
+    .on("mouseover", mouseover)
+    .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave);
 }
 
 // Make bar chart of all the states

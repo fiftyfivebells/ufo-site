@@ -81,7 +81,7 @@ func (app *application) getPrediction(w http.ResponseWriter, r *http.Request) {
 
 	app.renderTemplate(w, r, "home.page.tmpl", &templateData{
 		Form:       forms.New(nil),
-		Prediction: fmt.Sprintf("%.2f", prediction),
+		Prediction: fmt.Sprintf("%.2f", prediction*100),
 	})
 }
 

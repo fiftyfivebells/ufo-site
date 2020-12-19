@@ -45,6 +45,10 @@ func main() {
 
 	defer db.Close()
 
+	// Generate the clustering csv on load so we don't need to do it again
+	cmd := exec.Command("python", "pkg/python/clustering.py")
+	_, _ = cmd.CombinedOutput()
+
 	// Initialize the template cache
 	templateCache, err := newTemplateCache("./ui/html")
 	if err != nil {

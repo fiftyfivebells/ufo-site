@@ -1,1 +1,1 @@
-web: ufo-site
+web: main

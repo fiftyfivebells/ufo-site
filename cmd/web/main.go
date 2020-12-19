@@ -30,18 +30,14 @@ type application struct {
 }
 
 func main() {
-	// //	err := godotenv.Load(".env")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
 	dbAddr := os.Getenv("DB_ADDR")
 	dbPort := os.Getenv("DB_PORT")
 	dbName := os.Getenv("DB_NAME")
 	dbPass := os.Getenv("DB_PASS")
 	dbConn := fmt.Sprintf("postgresql://%s:%s@%s:%s/postgres", dbName, dbPass, dbAddr, dbPort)
 
-	addr := flag.String("addr", ":3000", "HTTP network address")
+	//	addr := flag.String("addr", ":3000", "HTTP network address")
+	addr := os.Getenv("PORT")
 	dsn := flag.String("dsn", dbConn, "PGSQL data source name")
 	secret := flag.String("secret", "7dj.12*y4^skqz)ske@3jskv*s+kd1#2", "Secret key")
 
@@ -81,12 +77,12 @@ func main() {
 	}
 
 	server := &http.Server{
-		Addr:     *addr,
+		Addr:     addr,
 		ErrorLog: errorLog,
 		Handler:  app.Routes(),
 	}
 
-	infoLog.Printf("Starting server on %s", *addr)
+	infoLog.Printf("Starting server on %s", addr)
 	err = server.ListenAndServe()
 	errorLog.Fatal(err)
 }

@@ -37,7 +37,7 @@ func main() {
 	dbConn := fmt.Sprintf("postgresql://%s:%s@%s:%s/postgres", dbName, dbPass, dbAddr, dbPort)
 
 	//	addr := flag.String("addr", ":3000", "HTTP network address")
-	addr := os.Getenv("PORT")
+	addr := ":" + os.Getenv("PORT")
 	dsn := flag.String("dsn", dbConn, "PGSQL data source name")
 	secret := flag.String("secret", "7dj.12*y4^skqz)ske@3jskv*s+kd1#2", "Secret key")
 

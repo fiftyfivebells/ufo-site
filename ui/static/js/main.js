@@ -35,9 +35,26 @@ window.addEventListener('DOMContentLoaded', (event) => {
       });
     });
   }
+
+  // Change active nav link when page is changed
+  (function () {
+    const current = location.pathname.split("/")[1];
+    const menuItems = document.querySelectorAll(".nav a");
+
+    for (let m of menuItems) {
+      if (current === "" && m.getAttribute("href") === "/") {
+        m.parentNode.className = "active";
+        return;
+      }
+
+      if (m.getAttribute("href").indexOf(current) !== -1) {
+        m.parentNode.className = "active";
+      }
+    }
+  })();
 });
 
-const sightings = []
+const sightings = [];
 
 // Get JSON from database and return the Promise of the items
 async function getJson() {
